@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
+import Pages from 'vite-plugin-pages'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,6 +14,8 @@ export default defineConfig({
     }),
     Components({
       dts: 'src/types/components.d.ts',
-    })
+    }),
+    // Frontend
+    Pages(),
   ]
 })
