@@ -9,6 +9,7 @@ specifiers:
   unplugin-vue-components: ^0.18.5
   vite: ^2.9.1
   vite-plugin-pages: ^0.22.0
+  vite-plugin-vue-layouts: ^0.6.0
   vue: ^3.2.31
   vue-router: ^4.0.14
   vue-tsc: ^0.33.9
@@ -26,6 +27,7 @@ devDependencies:
   unplugin-vue-components: 0.18.5_vite@2.9.1+vue@3.2.31
   vite: 2.9.1
   vite-plugin-pages: 0.22.0_vite@2.9.1
+  vite-plugin-vue-layouts: 0.6.0_7751236df27102a4c49ccda658860b98
   vue-tsc: 0.33.9_typescript@4.6.3
 
 packages:
@@ -1187,6 +1189,23 @@ packages:
       picocolors: 1.0.0
       vite: 2.9.1
       yaml: 2.0.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /vite-plugin-vue-layouts/0.6.0_7751236df27102a4c49ccda658860b98:
+    resolution: {integrity: sha512-7QX7o/NpCfs+hyXphwYfmPqAEQ6qd4uXsvI0VsovjGT2eCoEE5dMdP6L+uqqNWY4uqv7oCvtinecZmbzZv/9Rg==}
+    peerDependencies:
+      vite: ^2.5.0
+      vue: ^2.6.12 || ^3.2.4
+      vue-router: ^3.5.1 || ^ 4.0.11
+    dependencies:
+      '@vue/compiler-sfc': 3.2.31
+      debug: 4.3.4
+      fast-glob: 3.2.11
+      vite: 2.9.1
+      vue: 3.2.31
+      vue-router: 4.0.14_vue@3.2.31
     transitivePeerDependencies:
       - supports-color
     dev: true
