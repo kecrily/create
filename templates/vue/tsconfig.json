@@ -16,7 +16,8 @@
     "lib": ["esnext", "dom"],
     "types": [
       "vite/client",
-      "vite-plugin-pages/client"
+      "vue/macros-global",
+      "vite-plugin-pages/client",
     ],
     "paths": {
       "~/*": ["./src/*"],

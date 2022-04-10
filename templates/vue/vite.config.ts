@@ -16,9 +16,11 @@ export default defineConfig({
   },
 
   plugins: [
-    Vue(),
+    Vue({
+      reactivityTransform: true
+    }),
     AutoImport({
-      imports: ['vue'],
+      imports: ['vue', 'vue/macros'],
       dts: 'src/types/auto-imports.d.ts',
     }),
     Components({
