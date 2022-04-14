@@ -1,5 +1,3 @@
-import { fileURLToPath, URL } from 'url'
-
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import Vue from '@vitejs/plugin-vue'
@@ -11,9 +9,9 @@ import Layouts from 'vite-plugin-vue-layouts'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    tsconfigPaths({loose: true}),
+    tsconfigPaths({ loose: true }),
     Vue({
-      reactivityTransform: true
+      reactivityTransform: true,
     }),
     AutoImport({
       imports: ['vue', 'vue/macros'],
@@ -25,5 +23,5 @@ export default defineConfig({
     // Frontend
     Pages(),
     Layouts(),
-  ]
+  ],
 })
