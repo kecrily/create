@@ -5,11 +5,7 @@
 
 <style>
 #app {
+  @apply text-([#2c3e50] center) mt-15 antialiased items-center;
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>

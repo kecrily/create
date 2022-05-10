@@ -35,19 +35,23 @@ const count = $ref(0)
 </template>
 
 <style scoped>
-a {
-  color: #42b983;
+h1 {
+  @apply text-3xl font-bold;
 }
 
-label {
-  margin: 0 0.5em;
-  font-weight: bold;
+p {
+  @apply my-2;
+}
+
+a {
+  @apply text-[#42b983];
 }
 
 code {
-  background-color: #eee;
-  padding: 2px 4px;
-  border-radius: 4px;
-  color: #304455;
+  @apply text-[#304455] bg-[#eee] px-1 py-0.5 rounded;
+}
+
+button {
+  @apply text-(light-200 base) bg-[#42b983] hover:bg-[#79B592] w-24 h-8 rounded;
 }
 </style>

@@ -5,6 +5,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts'
+import Unocss from 'unocss/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -23,5 +24,6 @@ export default defineConfig({
     // Frontend
     Pages(),
     Layouts(),
+    Unocss(),
   ],
 })
