@@ -1,5 +1,6 @@
 .cache
 .DS_Store
+.eslintcache
 *.log
 *.tgz
 dist
