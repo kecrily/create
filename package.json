@@ -1,7 +1,7 @@
 {
   "name": "create-kecrily",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "bin": "bin.js",
   "files": [
     "dist",
@@ -11,17 +11,14 @@
     "dev": "unbuild --stub",
     "build": "unbuild"
   },
-  "dependencies": {
-    "@types/prompts": "^2.0.14",
-    "prompts": "^2.4.2"
-  },
   "devDependencies": {
-    "@kecrily/eslint-config": "^0.1.13",
     "@types/degit": "^2.8.3",
+    "@types/prompts": "^2.0.14",
     "create-kecrily": "link:",
     "degit": "^2.8.4",
     "eslint": "^8.23.0",
     "kolorist": "^1.5.1",
+    "prompts": "^2.4.2",
     "typescript": "^4.8.2",
     "unbuild": "^0.8.10"
   },
