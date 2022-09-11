@@ -2,7 +2,7 @@ import { exec } from 'child_process'
 import type { Choice } from 'prompts'
 import prompts from 'prompts'
 import { blue, green, red } from 'kolorist'
-import degit from 'degit'
+import { downloadTemplate } from 'giget'
 
 interface template {
   name: string
@@ -68,12 +68,14 @@ export default async function() {
       },
     })
   } catch (cancelled: any) {
+    // eslint-disable-next-line no-console
     console.log(cancelled.message)
     return
   }
 
-  const emitter = degit(`kecrily/create-kecrily/templates/${result.variant}`)
+  await downloadTemplate(`github:kecrily/create-kecrily/templates/${result.variant}#master`, {
+    dir: result.projectName,
+  })
 
-  await emitter.clone(result.projectName)
   exec(`git init ${result.projectName}`)
 }
