@@ -13,14 +13,14 @@
     "lint": "eslint . --cache"
   },
   "devDependencies": {
-    "@kecrily/eslint-config": "^0.1.13",
+    "@kecrily/eslint-config": "^0.1.17",
     "@types/prompts": "^2.0.14",
-    "eslint": "^8.23.0",
+    "eslint": "^8.23.1",
     "giget": "^0.1.5",
-    "kolorist": "^1.5.1",
+    "kolorist": "^1.6.0",
     "prompts": "^2.4.2",
-    "typescript": "^4.8.2",
-    "unbuild": "^0.8.10"
+    "typescript": "^4.8.3",
+    "unbuild": "^0.8.11"
   },
   "eslintConfig": {
     "extends": [

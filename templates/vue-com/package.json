@@ -1,7 +1,4 @@
 {
-  "name": "vue-component-starter",
-  "type": "module",
-  "packageManager": "pnpm@7.9.3",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -14,24 +11,16 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "lint": "eslint . --cache"
+    "build": "vue-tsc --noEmit && vite build"
   },
   "devDependencies": {
-    "@kecrily/eslint-config": "^0.1.12",
-    "@vitejs/plugin-vue": "^3.0.3",
-    "eslint": "^8.22.0",
-    "typescript": "^4.7.4",
+    "@vitejs/plugin-vue": "^3.1.0",
+    "typescript": "^4.8.3",
     "unplugin-auto-import": "^0.11.2",
-    "unplugin-vue-components": "^0.22.4",
-    "vite": "^3.0.8",
-    "vite-plugin-dts": "^1.4.1",
-    "vue": "^3.2.37",
-    "vue-tsc": "^0.40.1"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@kecrily"
-    ]
+    "unplugin-vue-components": "^0.22.7",
+    "vite": "^3.1.0",
+    "vite-plugin-dts": "^1.5.0",
+    "vue": "^3.2.39",
+    "vue-tsc": "^0.40.13"
   }
 }
