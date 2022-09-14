@@ -29,6 +29,7 @@ export default async function() {
       name: 'ifLint',
       type: 'confirm',
       message: 'Do you want to use ESLint and @kecrily/eslint-config?',
+      initial: true,
     },
   ] as Array<prompts.PromptObject>
 
