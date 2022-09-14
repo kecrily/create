@@ -31,9 +31,15 @@ export default async function() {
       message: 'Do you want to use ESLint and @kecrily/eslint-config?',
       initial: true,
     },
+    {
+      name: 'ifPrivate',
+      type: 'confirm',
+      message: 'Is this a private package?',
+      initial: true,
+    },
   ] as Array<prompts.PromptObject>
 
-  const { projectName, variant, ifLint } = await prompts(questions)
+  const { projectName, variant, ifLint, ifPrivate } = await prompts(questions)
   const pkm = detectPackageManager?.name || 'npm'
   // command shorthand
   const add = `${pkm} add`
@@ -52,7 +58,12 @@ export default async function() {
     ], { cd: projectName })
   }
 
-  runCommand([`${pks} name`], { cd: projectName })
+  if (ifPrivate)
+    runCommand([`${pks} private=true`], { cd: projectName })
+  else
+    runCommand([`${pks} version=0.1.0`], { cd: projectName })
+
+  runCommand([`${pks} name=${projectName}`, `${pks} type=module `], { cd: projectName })
 
   exec(`git init ${projectName}`)
 }
