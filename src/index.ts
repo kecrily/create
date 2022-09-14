@@ -4,6 +4,7 @@ import prompts from 'prompts'
 import { downloadTemplate } from 'giget'
 import detectPackageManager from 'which-pm-runs'
 import templates from './templates'
+import { runCommand } from './utils'
 
 export default async function() {
   const questions = [
@@ -31,26 +32,26 @@ export default async function() {
     },
   ] as Array<prompts.PromptObject>
 
-  let result: prompts.Answers<'projectName' | 'variant' | 'ifLint'>
+  const { projectName, variant, ifLint } = await prompts(questions)
+  const pkm = detectPackageManager?.name || 'npm'
+  // command shorthand
+  const add = `${pkm} add`
+  const pks = 'npm pkg set'
 
-  try {
-    result = await prompts(questions)
-  } catch (cancelled: any) {
-    // eslint-disable-next-line no-console
-    console.log(cancelled.message)
-    return
-  }
-
-  await downloadTemplate(`kecrily/create-kecrily/templates/${result.variant}#master`, {
+  await downloadTemplate(`kecrily/create-kecrily/templates/${variant}#master`, {
     provider: 'github',
-    dir: result.projectName,
+    dir: projectName,
   })
 
-  if (result.ifLint) {
-    const pkm = detectPackageManager?.name || 'npm'
-
-    exec(`cd ${result.projectName} && ${pkm} add eslint @kecrily/eslint-config typescript -D && npm pkg set scripts.lint='eslint . --cache' && npm pkg set eslintConfig.extends='@kecrily'`)
+  if (ifLint) {
+    runCommand([
+      `${add} eslint @kecrily/eslint-config typescript -D`,
+      `${pks} scripts.lint='eslint . --cache'`,
+      `${pks} eslintConfig.extends='@kecrily'`,
+    ], { cd: projectName })
   }
 
-  exec(`git init ${result.projectName}`)
+  runCommand([`${pks} name`], { cd: projectName })
+
+  exec(`git init ${projectName}`)
 }
