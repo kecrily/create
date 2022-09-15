@@ -1,10 +1,11 @@
-import { exec } from 'child_process'
+import { exec } from 'node:child_process'
+import { resolve } from 'node:path'
 import type { Choice } from 'prompts'
 import prompts from 'prompts'
 import { downloadTemplate } from 'giget'
-import detectPackageManager from 'which-pm-runs'
+import { readPackageJSON, writePackageJSON } from 'pkg-types'
 import templates from './templates'
-import { runCommand } from './utils'
+import { npmLatestVersion } from './utils'
 
 export default async function() {
   const questions = [
@@ -41,29 +42,36 @@ export default async function() {
 
   const { projectName, variant, ifLint, ifPrivate } = await prompts(questions)
   const pkm = detectPackageManager?.name || 'npm'
-  // command shorthand
-  const add = `${pkm} add`
-  const pks = 'npm pkg set'
 
   await downloadTemplate(`kecrily/create-kecrily/templates/${variant}#master`, {
     provider: 'github',
     dir: projectName,
   })
 
+  const pkgPath = resolve(process.cwd(), projectName)
+  let pkg = await readPackageJSON(pkgPath)
+
   if (ifLint) {
-    runCommand([
-      `${add} eslint @kecrily/eslint-config typescript -D`,
-      `${pks} scripts.lint='eslint . --cache'`,
-      `${pks} eslintConfig.extends='@kecrily'`,
-    ], { cd: projectName })
+    const dev = ['eslint', '@kecrily/eslint-config', 'typescript']
+    pkg.scripts.lint = 'eslint . --cache'
+    pkg.eslintConfig = { extends: '@kecrily' }
+
+    for (const d of dev)
+      pkg.devDependencies[d] = await npmLatestVersion(d)
   }
 
   if (ifPrivate)
-    runCommand([`${pks} private=true`], { cd: projectName })
+    pkg = { private: true, ...pkg }
   else
-    runCommand([`${pks} version=0.1.0`], { cd: projectName })
+    pkg = { version: '0.1.0', ...pkg }
 
-  runCommand([`${pks} name=${projectName}`, `${pks} type=module `], { cd: projectName })
+  pkg = {
+    name: projectName,
+    type: 'module',
+    ...pkg,
+  }
+
+  writePackageJSON(resolve(pkgPath, 'package.json'), pkg)
 
   exec(`git init ${projectName}`)
 }
