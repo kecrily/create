@@ -7,51 +7,23 @@ const count = $ref(0)
 <template>
   <h1>{{ msg }}</h1>
 
-  <p>
-    Recommended IDE setup:
-    <a href="https://code.visualstudio.com/" target="_blank">VSCode</a>
-    +
-    <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
-  </p>
+  <div class="card">
+    <button type="button" @click="count++">
+      count is {{ count }}
+    </button>
+    <p>
+      Edit
+      <code>components/HelloWorld.vue</code> to test HMR
+    </p>
+  </div>
 
-  <p>
-    See
-    <code>README.md</code> for more information.
-  </p>
-
-  <p>
-    <a href="https://vitejs.dev/guide/features.html" target="_blank">Vite Docs</a>
-    |
-    <a href="https://v3.vuejs.org/" target="_blank">Vue 3 Docs</a>
-  </p>
-
-  <button type="button" @click="count++">
-    count is: {{ count }}
-  </button>
-  <p>
-    Edit
-    <code>components/HelloWorld.vue</code> to test hot module replacement.
+  <p class="read-the-docs">
+    Click on the Vite and Vue logos to learn more
   </p>
 </template>
 
 <style scoped>
-h1 {
-  @apply text-3xl font-bold;
-}
-
-p {
-  @apply my-2;
-}
-
-a {
-  @apply text-[#42b983];
-}
-
-code {
-  @apply text-[#304455] bg-[#eee] px-1 py-0.5 rounded;
-}
-
-button {
-  @apply text-(light-200 base) bg-[#42b983] hover:bg-[#79B592] w-24 h-8 rounded;
+.read-the-docs {
+  color: #888;
 }
 </style>

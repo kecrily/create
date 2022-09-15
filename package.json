@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "unbuild --stub",
     "build": "unbuild",
-    "lint": "esli"
+    "lint": "eslint . --cache"
   },
   "devDependencies": {
     "@kecrily/eslint-config": "^0.1.17",
