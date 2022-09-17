@@ -41,7 +41,6 @@ export default async function() {
   ] as Array<prompts.PromptObject>
 
   const { projectName, variant, ifLint, ifPrivate } = await prompts(questions)
-  const pkm = detectPackageManager?.name || 'npm'
 
   await downloadTemplate(`kecrily/create-kecrily/templates/${variant}#master`, {
     provider: 'github',
