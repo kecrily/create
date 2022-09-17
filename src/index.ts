@@ -1,10 +1,12 @@
 import { exec } from 'node:child_process'
 import { resolve } from 'node:path'
 import { writeFile } from 'node:fs/promises'
+
 import enquirer from 'enquirer'
 import { downloadTemplate } from 'giget'
 import { readPackageJSON, writePackageJSON } from 'pkg-types'
-import { getLicense, npmLatestVersion } from './utils'
+
+import { commandResult, getLicense, npmLatestVersion } from './utils'
 import { templates } from './templates'
 import type { variant } from './templates'
 
@@ -98,9 +100,13 @@ export default async function() {
     /* eslint-enable */
   }
 
+  const name = commandResult('git config --get user.name')
+  const email = commandResult('git config --get user.email')
+
   pkg = {
     name: projectName,
     type: 'module',
+    author: `${name} <${email}>`,
     ...pkg,
   }
 
