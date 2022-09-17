@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@kecrily/eslint-config": "^0.1.17",
+    "@types/node": "^18.7.18",
     "enquirer": "^2.3.6",
     "eslint": "^8.23.1",
     "giget": "^0.1.6",

@@ -1,9 +1,10 @@
 import { exec } from 'node:child_process'
 import { resolve } from 'node:path'
+import { writeFile } from 'node:fs/promises'
 import enquirer from 'enquirer'
 import { downloadTemplate } from 'giget'
 import { readPackageJSON, writePackageJSON } from 'pkg-types'
-import { npmLatestVersion } from './utils'
+import { getLicense, npmLatestVersion } from './utils'
 import { templates } from './templates'
 import type { variant } from './templates'
 
@@ -32,10 +33,9 @@ async function whichTemplate() {
 export default async function() {
   const template = await whichTemplate()
 
-  const { projectName, ifLint, isPrivate } = await enquirer.prompt < {
+  const { projectName, ifLint } = await enquirer.prompt <{
     projectName: string
     ifLint: boolean
-    isPrivate: boolean
   }>([
     {
       name: 'projectName',
@@ -48,13 +48,27 @@ export default async function() {
       message: 'Do you want to use ESLint and @kecrily/eslint-config?',
       initial: true,
     },
-    {
-      name: 'isPrivate',
-      type: 'confirm',
-      message: 'Is this a private package?',
-      initial: true,
-    },
   ])
+
+  const { isPrivate } = await enquirer.prompt<{ isPrivate: boolean }>({
+    name: 'isPrivate',
+    type: 'confirm',
+    message: 'Is this a private package?',
+    initial: true,
+
+  })
+
+  let license: string
+  if (!isPrivate) {
+    ({ license } = await enquirer.prompt<{ license: string }>({
+      name: 'license',
+      type: 'select',
+      message: 'Which license do you want to use?',
+      choices: (await getLicense()).map(({ name, url }) => {
+        return { name: url, message: name }
+      }),
+    }))
+  }
 
   await downloadTemplate(`kecrily/create-kecrily/templates/${template}#master`, {
     provider: 'github',
@@ -73,10 +87,16 @@ export default async function() {
       pkg.devDependencies[d] = `^${await npmLatestVersion(d)}`
   }
 
-  if (isPrivate)
+  if (isPrivate) {
     pkg = { private: true, ...pkg }
-  else
+  } else {
     pkg = { version: '0.1.0', ...pkg }
+    /* eslint-disable camelcase */
+    const { spdx_id, body } = await(await fetch(license)).json()
+    pkg.license = spdx_id
+    writeFile(`${projectName}/LICENSE`, body)
+    /* eslint-enable */
+  }
 
   pkg = {
     name: projectName,
