@@ -1,26 +1,42 @@
 import { exec } from 'node:child_process'
 import { resolve } from 'node:path'
-import type { Choice } from 'prompts'
-import prompts from 'prompts'
+import enquirer from 'enquirer'
 import { downloadTemplate } from 'giget'
 import { readPackageJSON, writePackageJSON } from 'pkg-types'
-import templates from './templates'
 import { npmLatestVersion } from './utils'
+import { templates } from './templates'
+import type { variant } from './templates'
+
+async function whichTemplate() {
+  const { usage } = await enquirer.prompt<{ usage: variant[] }>({
+    name: 'usage',
+    type: 'select',
+    message: 'What do you wan to do:',
+    choices: templates.map(({ display, variants }) => {
+      return { name: variants, message: display }
+    }),
+  })
+
+  const { template } = await enquirer.prompt<{ template: string }>({
+    name: 'template',
+    type: 'select',
+    message: 'Select a variant:',
+    choices: usage.map(({ display, name }) => {
+      return { name, message: display }
+    }),
+  })
+
+  return template
+}
 
 export default async function() {
-  const questions = [
-    {
-      name: 'usage',
-      type: 'select',
-      message: 'What do you wan to do:',
-      choices: templates.map((t) => { return { title: t.display, value: t.variants } as Choice }),
-    },
-    {
-      name: 'variant',
-      type: 'select',
-      message: 'Select a variant:',
-      choices: usage => usage.map((v) => { return { title: v.display, value: v.name } as Choice }),
-    },
+  const template = await whichTemplate()
+
+  const { projectName, ifLint, isPrivate } = await enquirer.prompt < {
+    projectName: string
+    ifLint: boolean
+    isPrivate: boolean
+  }>([
     {
       name: 'projectName',
       type: 'text',
@@ -33,16 +49,14 @@ export default async function() {
       initial: true,
     },
     {
-      name: 'ifPrivate',
+      name: 'isPrivate',
       type: 'confirm',
       message: 'Is this a private package?',
       initial: true,
     },
-  ] as Array<prompts.PromptObject>
+  ])
 
-  const { projectName, variant, ifLint, ifPrivate } = await prompts(questions)
-
-  await downloadTemplate(`kecrily/create-kecrily/templates/${variant}#master`, {
+  await downloadTemplate(`kecrily/create-kecrily/templates/${template}#master`, {
     provider: 'github',
     dir: projectName,
   })
@@ -56,10 +70,10 @@ export default async function() {
     pkg.eslintConfig = { extends: '@kecrily' }
 
     for (const d of dev)
-      pkg.devDependencies[d] = await npmLatestVersion(d)
+      pkg.devDependencies[d] = `^${await npmLatestVersion(d)}`
   }
 
-  if (ifPrivate)
+  if (isPrivate)
     pkg = { private: true, ...pkg }
   else
     pkg = { version: '0.1.0', ...pkg }

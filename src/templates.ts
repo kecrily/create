@@ -3,12 +3,12 @@ import { blue, green } from 'kolorist'
 interface template {
   name: string
   display: string
-  variants?: variant[]
+  variants: variant[]
 }
 
 type variant = Omit<template, 'variants'>
 
-export default [
+const templates = [
   {
     name: 'lib',
     display: 'Library',
@@ -34,3 +34,5 @@ export default [
     ],
   },
 ] as template[]
+
+export { variant, templates }
