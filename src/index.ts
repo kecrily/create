@@ -35,9 +35,10 @@ async function whichTemplate() {
 export default async function() {
   const template = await whichTemplate()
 
-  const { projectName, ifLint } = await enquirer.prompt <{
+  const { projectName, ifLint, isPrivate } = await enquirer.prompt <{
     projectName: string
     ifLint: boolean
+    isPrivate: boolean
   }>([
     {
       name: 'projectName',
@@ -50,27 +51,13 @@ export default async function() {
       message: 'Do you want to use ESLint and @kecrily/eslint-config?',
       initial: true,
     },
+    {
+      name: 'isPrivate',
+      type: 'confirm',
+      message: 'Is this a private package?',
+      initial: true,
+    },
   ])
-
-  const { isPrivate } = await enquirer.prompt<{ isPrivate: boolean }>({
-    name: 'isPrivate',
-    type: 'confirm',
-    message: 'Is this a private package?',
-    initial: true,
-
-  })
-
-  let license: string
-  if (!isPrivate) {
-    ({ license } = await enquirer.prompt<{ license: string }>({
-      name: 'license',
-      type: 'select',
-      message: 'Which license do you want to use?',
-      choices: (await getLicense()).map(({ name, url }) => {
-        return { name: url, message: name }
-      }),
-    }))
-  }
 
   await downloadTemplate(`kecrily/create-kecrily/templates/${template}#master`, {
     provider: 'github',
@@ -80,6 +67,26 @@ export default async function() {
   const pkgPath = resolve(process.cwd(), projectName)
   let pkg = await readPackageJSON(pkgPath)
 
+  if (isPrivate) {
+    pkg = { private: true, ...pkg }
+  } else {
+    const { license } = await enquirer.prompt<{ license: string }>({
+      name: 'license',
+      type: 'select',
+      message: 'Which license do you want to use?',
+      choices: (await getLicense()).map(({ name, url }) => {
+        return { name: url, message: name }
+      }),
+    })
+
+    pkg = { version: '0.1.0', ...pkg }
+    /* eslint-disable camelcase */
+    const { spdx_id, body } = await(await fetch(license)).json()
+    pkg.license = spdx_id
+    /* eslint-enable */
+    writeFile(`${projectName}/LICENSE`, body)
+  }
+
   if (ifLint) {
     const dev = ['eslint', '@kecrily/eslint-config', 'typescript']
     pkg.scripts.lint = 'eslint . --cache'
@@ -87,17 +94,6 @@ export default async function() {
 
     for (const d of dev)
       pkg.devDependencies[d] = `^${await npmLatestVersion(d)}`
-  }
-
-  if (isPrivate) {
-    pkg = { private: true, ...pkg }
-  } else {
-    pkg = { version: '0.1.0', ...pkg }
-    /* eslint-disable camelcase */
-    const { spdx_id, body } = await(await fetch(license)).json()
-    pkg.license = spdx_id
-    writeFile(`${projectName}/LICENSE`, body)
-    /* eslint-enable */
   }
 
   const name = commandResult('git config --get user.name')
