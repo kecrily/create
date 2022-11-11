@@ -8,10 +8,10 @@ import { readPackageJSON, writePackageJSON } from 'pkg-types'
 
 import { commandResult, getLicense, npmLatestVersion } from './utils'
 import { templates } from './templates'
-import type { variant } from './templates'
+import type { Variant } from './templates'
 
 async function whichTemplate() {
-  const { usage } = await enquirer.prompt<{ usage: variant[] }>({
+  const { usage } = await enquirer.prompt<{ usage: Variant[] }>({
     name: 'usage',
     type: 'select',
     message: 'What do you wan to do:',
@@ -80,10 +80,8 @@ export default async function() {
     })
 
     pkg = { version: '0.1.0', ...pkg }
-    /* eslint-disable camelcase */
     const { spdx_id, body } = await(await fetch(license)).json()
     pkg.license = spdx_id
-    /* eslint-enable */
     writeFile(`${projectName}/LICENSE`, body)
   }
 

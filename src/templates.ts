@@ -1,12 +1,12 @@
 import { blue, green } from 'kolorist'
 
-interface template {
+interface Template {
   name: string
   display: string
-  variants: variant[]
+  variants: Variant[]
 }
 
-type variant = Omit<template, 'variants'>
+type Variant = Omit<Template, 'variants'>
 
 const templates = [
   {
@@ -33,6 +33,6 @@ const templates = [
       },
     ],
   },
-] as template[]
+] as Template[]
 
-export { variant, templates }
+export { Variant, templates }
