@@ -7,8 +7,8 @@ export async function npmLatestVersion(name: string) {
 export async function getLicense() {
   return (await fetch('https://api.github.com/licenses', {
     headers: {
-      'Content-Type': 'application/vnd.github+json',
-    },
+      'Content-Type': 'application/vnd.github+json'
+    }
   })).json()
 }
 

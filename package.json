@@ -13,18 +13,23 @@
     "lint": "eslint . --cache",
     "create": "node bin.js"
   },
+  "dependencies": {
+    "enquirer": "^2.4.0",
+    "giget": "^1.1.2",
+    "kolorist": "^1.8.0",
+    "pkg-types": "^1.0.3"
+  },
   "devDependencies": {
     "@kecrily/eslint-config": "^0.2.7",
     "@types/node": "^20.4.5",
-    "enquirer": "^2.4.0",
     "eslint": "^8.45.0",
-    "giget": "^1.1.2",
-    "kolorist": "^1.8.0",
-    "pkg-types": "^1.0.3",
     "typescript": "^5.1.6",
     "unbuild": "^1.2.1"
   },
   "eslintConfig": {
-    "extends": "@kecrily"
+    "extends": "@kecrily",
+    "ignorePatterns": [
+      "templates/*"
+    ]
   }
 }

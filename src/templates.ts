@@ -15,13 +15,13 @@ const templates = [
     variants: [
       {
         name: 'ts',
-        display: blue('TypeScript'),
+        display: blue('TypeScript')
       },
       {
         name: 'vue-com',
-        display: green('Vue Component'),
-      },
-    ],
+        display: green('Vue Component')
+      }
+    ]
   },
   {
     name: 'web',
@@ -29,10 +29,10 @@ const templates = [
     variants: [
       {
         name: 'vue',
-        display: green('Vue'),
-      },
-    ],
-  },
+        display: green('Vue')
+      }
+    ]
+  }
 ] as Template[]
 
 export { Variant, templates }

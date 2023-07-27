@@ -17,7 +17,7 @@ async function whichTemplate() {
     message: 'What do you wan to do:',
     choices: templates.map(({ display, variants }) => {
       return { name: variants, message: display }
-    }),
+    })
   })
 
   const { template } = await enquirer.prompt<{ template: string }>({
@@ -26,7 +26,7 @@ async function whichTemplate() {
     message: 'Select a variant:',
     choices: usage.map(({ display, name }) => {
       return { name, message: display }
-    }),
+    })
   })
 
   return template
@@ -43,25 +43,25 @@ export default async function() {
     {
       name: 'projectName',
       type: 'text',
-      message: 'Your project name?',
+      message: 'Your project name?'
     },
     {
       name: 'ifLint',
       type: 'confirm',
       message: 'Do you want to use ESLint and @kecrily/eslint-config?',
-      initial: true,
+      initial: true
     },
     {
       name: 'isPrivate',
       type: 'confirm',
       message: 'Is this a private package?',
-      initial: true,
-    },
+      initial: true
+    }
   ])
 
   await downloadTemplate(`kecrily/create-kecrily/templates/${template}#master`, {
     provider: 'github',
-    dir: projectName,
+    dir: projectName
   })
 
   const pkgPath = resolve(process.cwd(), projectName)
@@ -76,7 +76,7 @@ export default async function() {
       message: 'Which license do you want to use?',
       choices: (await getLicense()).map(({ name, url }) => {
         return { name: url, message: name }
-      }),
+      })
     })
 
     pkg = { version: '0.1.0', ...pkg }
@@ -101,7 +101,7 @@ export default async function() {
     name: projectName,
     type: 'module',
     author: `${name} <${email}>`,
-    ...pkg,
+    ...pkg
   }
 
   writePackageJSON(resolve(pkgPath, 'package.json'), pkg)
