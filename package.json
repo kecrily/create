@@ -14,7 +14,7 @@
     "create": "node bin.js"
   },
   "dependencies": {
-    "enquirer": "^2.4.0",
+    "@clack/prompts": "^0.6.3",
     "giget": "^1.1.2",
     "kolorist": "^1.8.0",
     "pkg-types": "^1.0.3"

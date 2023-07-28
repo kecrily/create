@@ -2,100 +2,83 @@ import { exec } from 'node:child_process'
 import { resolve } from 'node:path'
 import { writeFile } from 'node:fs/promises'
 
-import enquirer from 'enquirer'
+import { cancel, confirm, group, select, text } from '@clack/prompts'
 import { downloadTemplate } from 'giget'
 import { readPackageJSON, writePackageJSON } from 'pkg-types'
 
 import { commandResult, getLicense, npmLatestVersion } from './utils'
-import { templates } from './templates'
-import type { Variant } from './templates'
-
-async function whichTemplate() {
-  const { usage } = await enquirer.prompt<{ usage: Variant[] }>({
-    name: 'usage',
-    type: 'select',
-    message: 'What do you wan to do:',
-    choices: templates.map(({ display, variants }) => {
-      return { name: variants, message: display }
-    })
-  })
-
-  const { template } = await enquirer.prompt<{ template: string }>({
-    name: 'template',
-    type: 'select',
-    message: 'Select a variant:',
-    choices: usage.map(({ display, name }) => {
-      return { name, message: display }
-    })
-  })
-
-  return template
-}
 
 export default async function() {
-  const template = await whichTemplate()
+  const pkgManager = process.env.npm_config_user_agent?.split('/')[0]
 
-  const { projectName, ifLint, isPrivate } = await enquirer.prompt <{
-    projectName: string
-    ifLint: boolean
-    isPrivate: boolean
-  }>([
-    {
-      name: 'projectName',
-      type: 'text',
-      message: 'Your project name?'
+  const { template, projectName, isPrivate, license, lint } = await group({
+    template: () => select({
+      message: 'What do you wan to do:',
+      initialValue: 'ts',
+      options: [
+        { label: 'TypeScript', value: 'ts' },
+        { label: 'Vue Website', value: 'vue' },
+        { label: 'Vue Component', value: 'vue-com' }
+      ]
+    }),
+    projectName: () => text({
+      message: 'Your project name?',
+      initialValue: 'new-project'
+    }),
+    isPrivate: () => confirm({
+      message: 'Is this a private package',
+      initialValue: true
+    }),
+    license: async({ results: { isPrivate } }) => {
+      if (!isPrivate) {
+        return select({
+          message: 'Which license do you want to use?',
+          initialValue: 'mit',
+          options: (await getLicense()).map(({ name, key }) => {
+            return { label: name, value: key }
+          })
+        })
+      }
     },
-    {
-      name: 'ifLint',
-      type: 'confirm',
+    lint: () => confirm({
       message: 'Do you want to use ESLint and @kecrily/eslint-config?',
-      initial: true
-    },
-    {
-      name: 'isPrivate',
-      type: 'confirm',
-      message: 'Is this a private package?',
-      initial: true
-    }
-  ])
+      initialValue: true
+    })
+  }, { onCancel: () => { cancel('Cancelled'); process.exit(0) } })
 
-  await downloadTemplate(`kecrily/create-kecrily/templates/${template}#master`, {
-    provider: 'github',
-    dir: projectName
+  await downloadTemplate(`kecrily/create/templates/${template}#master`, {
+    provider: 'github', dir: projectName
   })
 
   const pkgPath = resolve(process.cwd(), projectName)
+  const name = commandResult('git config --get user.name')
+  const email = commandResult('git config --get user.email')
+
   let pkg = await readPackageJSON(pkgPath)
 
   if (isPrivate) {
     pkg = { private: true, ...pkg }
   } else {
-    const { license } = await enquirer.prompt<{ license: string }>({
-      name: 'license',
-      type: 'select',
-      message: 'Which license do you want to use?',
-      choices: (await getLicense()).map(({ name, url }) => {
-        return { name: url, message: name }
-      })
-    })
-
     pkg = { version: '0.1.0', ...pkg }
-    const { spdx_id, body } = await(await fetch(license)).json()
+
+    const { spdx_id, body } = await(await fetch(`https://api.github.com/licenses/${license}`)).json()
     pkg.license = spdx_id
-    writeFile(`${projectName}/LICENSE`, body)
+    writeFile(`${pkgPath}/LICENSE`, body
+      .replace('[fullname]', name)
+      .replace('[year]', new Date().getFullYear())
+    )
   }
 
-  if (ifLint) {
+  if (lint) {
     const dev = ['eslint', '@kecrily/eslint-config', 'typescript']
     pkg.scripts.lint = 'eslint . --cache'
     pkg.eslintConfig = { extends: '@kecrily' }
 
     for (const d of dev)
       pkg.devDependencies[d] = `^${await npmLatestVersion(d)}`
-  }
 
-  const name = commandResult('git config --get user.name')
-  const email = commandResult('git config --get user.email')
+    exec(`cd ${pkgPath} && ${pkgManager} install && ${pkgManager} run lint --fix`)
+  }
 
   pkg = {
     name: projectName,
