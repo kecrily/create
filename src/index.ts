@@ -23,7 +23,8 @@ export default async function() {
     }),
     projectName: () => text({
       message: 'Your project name?',
-      initialValue: 'new-project'
+      defaultValue: 'new-project',
+      placeholder: 'new-project'
     }),
     isPrivate: () => confirm({
       message: 'Is this a private package',
