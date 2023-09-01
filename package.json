@@ -2,6 +2,7 @@
   "name": "create-kecrily",
   "type": "module",
   "version": "0.1.5",
+  "repository": "github:kecrily/create",
   "bin": "bin.js",
   "files": [
     "dist",
